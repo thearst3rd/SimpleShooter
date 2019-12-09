@@ -1,9 +1,11 @@
 -- The player class
 -- Includes both Human and AI player
 
-local PLAYER_RADIUS = 20
-local MOVE_SPEED = 100 		-- pixels/second
-local MOVE_ACCEL = 1000 	-- pixels/second/second
+local RADIUS = 20 				-- pixels
+local MOVE_SPEED = 300 			-- pixels/second
+local TURN_SPEED = 2 * math.pi 	-- rad/second
+local MOVE_ACCEL = 1000 		-- pixels/second/second
+local FRICTION_ACCEL = 300 		-- pixels/second/second
 
 
 -- Setup
@@ -64,8 +66,8 @@ function player.new(isHuman, x, y, dir)
 	self.y = y or 200
 	self.dir = dir or 0
 	
-	self.radius = PLAYER_RADIUS
-	self.moveSpeed = MOVE_SPEED
+	self.xspeed = 0
+	self.yspeed = 0
 	
 	self.prevInputs = 
 	{
@@ -91,18 +93,101 @@ function player:update(dt)
 		inputs = self:getAiInputs()
 	end
 	
-	-- TODO implement movement
+	local xx = 0
+	local yy = 0
+	
+	if inputs.leftturn then
+		self.dir = self.dir - TURN_SPEED * dt
+	end
+	
+	if inputs.rightturn then
+		self.dir = self.dir + TURN_SPEED * dt
+	end
+	
+	-- loop range around
+	if self.dir < 0 then self.dir = self.dir + (2 * math.pi)
+	elseif self.dir >= (2 * math.pi) then self.dir = self.dir - (2 * math.pi) end
+	
+	-- This is used to normalize movement vector so that diagonal movement is not faster than orthogonal movement
+	local shouldNormalize = ((inputs.forward or inputs.backward) and not (inputs.forward and inputs.backward))
+		and ((inputs.leftstrafe or inputs.rightstrafe) and not (inputs.leftstrafe and inputs.rightstrafe))
+	
+	local magnitude = shouldNormalize and (1 / math.sqrt(2)) or 1
+	
+	if inputs.forward then
+		xx = xx + magnitude * math.cos(self.dir)
+		yy = yy + magnitude * math.sin(self.dir)
+	end
+	if inputs.backward then
+		xx = xx + magnitude * math.cos(self.dir + math.pi)
+		yy = yy + magnitude * math.sin(self.dir + math.pi)
+	end
+	if inputs.leftstrafe then
+		xx = xx + magnitude * math.cos(self.dir + (3 * math.pi / 2))
+		yy = yy + magnitude * math.sin(self.dir + (3 * math.pi / 2))
+	end
+	if inputs.rightstrafe then
+		xx = xx + magnitude * math.cos(self.dir + (math.pi / 2))
+		yy = yy + magnitude * math.sin(self.dir + (math.pi / 2))
+	end
+	
+	-- Accelerate player based on movement inputs
+	self.xspeed = self.xspeed + (dt * MOVE_ACCEL * xx)
+	self.yspeed = self.yspeed + (dt * MOVE_ACCEL * yy)
+	
+	-- Cap max speed
+	local speedMag = helper.getMagnitude(self.xspeed, self.yspeed)
+	if speedMag > MOVE_SPEED then
+		self.xspeed, self.yspeed = helper.scale(MOVE_SPEED, helper.normalize(self.xspeed, self.yspeed))
+		--self.xspeed = MOVE_SPEED * self.xspeed
+		--self.yspeed = MOVE_SPEED * self.yspeed
+		speedMag = MOVE_SPEED
+	end
+	
+	-- Actually move x and y coords
+	self:move(dt)
+	
+	-- Handle friction
+	if speedMag > 0 then
+		local newSpeedMag = speedMag - (FRICTION_ACCEL * dt)
+		if newSpeedMag < 0 then newSpeedMag = 0 end
+		self.xspeed, self.yspeed = helper.scale(newSpeedMag, helper.normalize(self.xspeed, self.yspeed))
+	end
 	
 	prevInputs = inputs
+end
+
+-- Moves based on x and y speeds, and stays in bounds
+function player:move(dt)
+	self.x = self.x + (self.xspeed * dt)
+	self.y = self.y + (self.yspeed * dt)
+	
+	
+	if self.x < (100 + RADIUS) then
+		self.x = 100 + RADIUS
+		self.xspeed = 0
+	end
+	if self.x > (1280 - 100 - RADIUS) then
+		self.x = 1280 - 100 - RADIUS
+		self.xspeed = 0
+	end
+	if self.y < (100 + RADIUS) then
+		self.y = 100 + RADIUS
+		self.yspeed = 0
+	end
+	if self.y > (720 - 100 - RADIUS) then
+		self.y = 720 - 100 - RADIUS
+		self.yspeed = 0
+	end
 end
 
 function player:draw()
 	-- Player body
 	love.graphics.setColor(isHuman and {1, 0, 0} or {0, 1, 0})
-	love.graphics.circle("fill", self.x, self.y, self.radius)
+	love.graphics.circle("fill", self.x, self.y, RADIUS)
+	love.graphics.setColor(0, 0, 0)
+	love.graphics.circle("line", self.x, self.y, RADIUS)
 	
 	-- Direction line
-	love.graphics.setColor(0, 0, 0)
-	love.graphics.line(self.x, self.y, self.x + (self.radius * math.cos(self.dir)), self.y + (self.radius *
-		math.sin(self.dir)))
+	love.graphics.line(self.x, self.y, self.x + (RADIUS * math.cos(self.dir)), self.y + (RADIUS * math.sin(self.dir)))
 end

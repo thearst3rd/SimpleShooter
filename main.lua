@@ -9,6 +9,11 @@ mediumFont = love.graphics.newFont(24)
 smallFont = love.graphics.newFont(12)
 
 
+-- Helper library
+
+require "helper"
+
+
 -- Include all the game states
 
 states = {}
