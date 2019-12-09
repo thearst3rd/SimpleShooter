@@ -1,19 +1,51 @@
 -- SimpleShooter for CS/IMGD 4100
 -- by Terry Hearst and Kyle Reese
 
-local elapsed
+
+-- Define fonts for later use
+
+bigFont = love.graphics.newFont(36)
+mediumFont = love.graphics.newFont(24)
+smallFont = love.graphics.newFont(12)
+
+
+-- Include all the game states
+
+states = {}
+require "states/game"
+require "states/menu"
+
+
+-- Include all objects
+
+objects = {}
+require "objects/player"
+
+
+-- Main game callbacks
 
 function love.load()
-	elapsed = 0
+	state = states.menu.load()
 end
-
 
 function love.update(dt)
-	elapsed = elapsed + dt
+	if state and state.update then
+		state:update(dt)
+	end
 end
 
-
 function love.draw()
-	local w, h = love.graphics.getDimensions()
-	love.graphics.ellipse("fill", (w / 2) + math.sin(elapsed) * 200, (h / 2) + math.cos(elapsed) * 200, 50, 50)
+	if state and state.draw then
+		state:draw()
+	end
+end
+
+-- Pass through other callbacks
+
+for _, v in ipairs{"keypressed", "keyreleased", "mousemoved", "mousepressed", "mousereleased"} do
+	love[v] = function(...)
+		if state and state[v] then
+			state[v](state, ...)
+		end
+	end
 end
