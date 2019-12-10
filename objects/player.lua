@@ -1,11 +1,15 @@
 -- The player class
 -- Includes both Human and AI player
 
-local RADIUS = 20 				-- pixels
+local RADIUS = 20
+
 local MOVE_SPEED = 300 			-- pixels/second
 local TURN_SPEED = 2 * math.pi 	-- rad/second
 local MOVE_ACCEL = 1000 		-- pixels/second/second
 local FRICTION_ACCEL = 300 		-- pixels/second/second
+
+local BULLET_COOLDOWN = 1/3 	-- seconds
+local MAX_AMMO = 10
 
 
 -- Setup
@@ -53,6 +57,13 @@ function player:getAiInputs()
 	return inputs
 end
 
+function player:shootBullet()
+	if (self.bulletCooldown <= 0) then
+		table.insert(state.objects, objects.bullet.new(self, self.x, self.y, self.dir))
+		self.bulletCooldown = BULLET_COOLDOWN
+	end
+end
+
 
 -- Main callbacks
 
@@ -68,6 +79,10 @@ function player.new(isHuman, x, y, dir)
 	
 	self.xspeed = 0
 	self.yspeed = 0
+	
+	self.lives = 3
+	self.bulletCooldown = 0
+	self.ammo = MAX_AMMO
 	
 	self.prevInputs = 
 	{
@@ -146,6 +161,18 @@ function player:update(dt)
 	-- Actually move x and y coords
 	self:move(dt)
 	
+	-- Fire bullets
+	if self.bulletCooldown > 0 then
+		self.bulletCooldown = self.bulletCooldown - dt
+		if self.bulletCooldown < 0 then
+			self.bulletCooldown = 0
+		end
+	end
+	
+	if inputs.shoot then
+		self:shootBullet()
+	end
+	
 	speedMag = helper.getMagnitude(self.xspeed, self.yspeed)
 	
 	-- Handle friction
@@ -191,4 +218,14 @@ function player:draw()
 	
 	-- Direction line
 	love.graphics.line(self.x, self.y, self.x + (RADIUS * math.cos(self.dir)), self.y + (RADIUS * math.sin(self.dir)))
+end
+
+-- Draws on top of all other players
+function player:drawHud()
+	love.graphics.setFont(smallFont)
+	
+	local xx = math.floor(self.x - 100)
+	local yy = math.floor(self.y - RADIUS - 24)
+	
+	love.graphics.printf(tostring(self.ammo), xx, yy, 200, "center")
 end

@@ -24,8 +24,26 @@ function game.load()
 end
 
 function game:update(dt)
+	-- Update game
 	for k, v in ipairs(self.players) do
 		if v.update then v:update(dt) end
+	end
+	for k, v in ipairs(self.objects) do
+		if v.update then v:update(dt) end
+	end
+	
+	-- Delete things marked for deletion
+	for i = #self.objects, 1, -1 do
+		if self.objects[i].markedForDeletion then
+			if self.objects[i].destroy then self.objects[i]:destroy() end
+			table.remove(self.objects, i)
+		end
+	end
+	for i = #self.players, 1, -1 do
+		if self.players[i].markedForDeletion then
+			if self.players[i].destroy then self.players[i]:destroy() end
+			table.remove(self.players, i)
+		end
 	end
 end
 
@@ -43,9 +61,17 @@ function game:draw()
 	love.graphics.line(0, 0,  1280, 0,  1280, 720,  0, 720,  0, 0)
 	love.graphics.line(100, 100,  1280 - 100, 100,  1280 - 100, 720 - 100,  100, 720 - 100,  100, 100)
 	
+	-- Draw objects
+	for k, v in ipairs(self.objects) do
+		if v.draw then v:draw() end
+	end
+	
 	-- Draw players
 	for k, v in ipairs(self.players) do
 		if v.draw then v:draw() end
+	end
+	for k, v in ipairs(self.players) do
+		if v.drawHud then v:drawHud() end
 	end
 end
 

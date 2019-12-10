@@ -4,9 +4,10 @@
 
 -- Define fonts for later use
 
+titleFont = love.graphics.newFont(72)
 bigFont = love.graphics.newFont(36)
 mediumFont = love.graphics.newFont(24)
-smallFont = love.graphics.newFont(12)
+smallFont = love.graphics.newFont(16)
 
 
 -- Helper library
@@ -25,6 +26,7 @@ require "states/menu"
 
 objects = {}
 require "objects/player"
+require "objects/bullet"
 
 
 -- Main game callbacks
