@@ -39,6 +39,10 @@ function game:draw()
 	love.graphics.rectangle("fill", 0, 100, 100, 520)
 	love.graphics.rectangle("fill", 1280 - 100, 100, 100, 520)
 	
+	love.graphics.setColor(0, 0, 0)
+	love.graphics.line(0, 0,  1280, 0,  1280, 720,  0, 720,  0, 0)
+	love.graphics.line(100, 100,  1280 - 100, 100,  1280 - 100, 720 - 100,  100, 720 - 100,  100, 100)
+	
 	-- Draw players
 	for k, v in ipairs(self.players) do
 		if v.draw then v:draw() end

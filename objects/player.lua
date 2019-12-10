@@ -141,11 +141,12 @@ function player:update(dt)
 		self.xspeed, self.yspeed = helper.scale(MOVE_SPEED, helper.normalize(self.xspeed, self.yspeed))
 		--self.xspeed = MOVE_SPEED * self.xspeed
 		--self.yspeed = MOVE_SPEED * self.yspeed
-		speedMag = MOVE_SPEED
 	end
 	
 	-- Actually move x and y coords
 	self:move(dt)
+	
+	speedMag = helper.getMagnitude(self.xspeed, self.yspeed)
 	
 	-- Handle friction
 	if speedMag > 0 then
