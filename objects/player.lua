@@ -246,12 +246,8 @@ function player:draw()
 	love.graphics.circle("line", self.x, self.y, self.radius)
 	
 	-- Direction line
-	love.graphics.line(self.x, self.y, self.x + (self.radius * math.cos(self.dir)), self.y + (self.radius * math.sin(self.dir)))
-	
-	-- TESTING - show facing thing
-	if agentHelper.isFacingObject({player = self}, agentHelper.getClosestDistAmmoPack({player = self}), math.pi / 2) then
-		love.graphics.print("facing", self.x, self.y)
-	end
+	love.graphics.line(self.x, self.y, self.x + (self.radius * math.cos(self.dir)), self.y + (self.radius *
+		math.sin(self.dir)))
 end
 
 -- Draws on top of all other players

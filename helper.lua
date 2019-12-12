@@ -33,11 +33,9 @@ function helper.isFacing(x1, y1, dir, x2, y2, threshold)
 	threshold = threshold or (math.pi / 8)
 	
 	local realDir = math.atan2(y2 - y1, x2 - x1)
+	if realDir < 0 then realDir = realDir + (2 * math.pi) end
 	
 	local diff = dir - realDir
-	
-	if diff <= -math.pi then diff = diff + math.pi end
-	if diff > math.pi then diff = diff - math.pi end
 	
 	return (math.abs(diff) < (threshold / 2))
 end
