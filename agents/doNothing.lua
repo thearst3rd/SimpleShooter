@@ -19,7 +19,7 @@ function doNothing.new(player)
 	return self
 end
 
-function doNothing:getInputs()
+function doNothing:getInputs(dt)
 	local inputs =
 	{
 		forward = false,

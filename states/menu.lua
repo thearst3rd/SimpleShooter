@@ -6,6 +6,21 @@
 states.menu = {}
 local menu = states.menu
 menu.__index = menu
+
+
+local persistentPlayers =
+{
+	--     1          2           3           4                 5          6         7
+	-- agentIndex, isHuman, hoverButtonL, hoverButtonR, hoverButtonHuman, isOn, toggleHover
+	{1, true, false, false, false, true, false},
+	{1, false, false, false, false, true, false},
+	{1, false, false, false, false, false, false},
+	{1, false, false, false, false, false, false},
+	{1, false, false, false, false, false, false},
+	{1, false, false, false, false, false, false},
+}
+
+
 -- Main callbacks
 
 function menu.load()
@@ -21,17 +36,7 @@ function menu.load()
 		end
 	end
 	
-	self.players =
-	{
-		--     1          2           3           4                 5          6         7
-		-- agentIndex, isHuman, hoverButtonL, hoverButtonR, hoverButtonHuman, isOn, toggleHover
-		{1, true, false, false, false, true, false},
-		{1, false, false, false, false, true, false},
-		{1, false, false, false, false, false, false},
-		{1, false, false, false, false, false, false},
-		{1, false, false, false, false, false, false},
-		{1, false, false, false, false, false, false},
-	}
+	self.players = persistentPlayers
 	
 	self.playHover = false
 	

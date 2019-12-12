@@ -19,7 +19,7 @@ function TEMPLATE.new(player)
 	return self
 end
 
-function TEMPLATE:getInputs()
+function TEMPLATE:getInputs(dt)
 	local inputs =
 	{
 		forward = false,

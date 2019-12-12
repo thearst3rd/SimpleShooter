@@ -17,24 +17,11 @@ function game.load(players)
 	self.players = {}
 	self.objects = {}
 	
-	-- which direction each player will face
-	-- im lazy and this will work
-	local dirTable =
-	{
-		math.pi / 6,
-		math.pi / 2,
-		5 * math.pi / 6,
-		11 * math.pi / 6,
-		3 * math.pi / 2,
-		7 * math.pi / 6,
-	}
-	
 	-- Initial world state
 	for i, plr in ipairs(players) do
 		if plr then
 			table.insert(self.players, objects.player.new(agents[plr], 200 + (((i - 1) % 3 * 440)),
-				(i < 4) and 200 or 720 - 200,
-				dirTable[i]))
+				(i < 4) and 200 or 720 - 200))
 		end
 	end
 	

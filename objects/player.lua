@@ -43,7 +43,7 @@ function player.new(agent, x, y, dir)
 	
 	self.x = x or 200
 	self.y = y or 200
-	self.dir = dir or 0
+	self.dir = dir or (math.atan2(360 - y, 640 - x))
 	
 	self.xspeed = 0
 	self.yspeed = 0
@@ -109,7 +109,7 @@ function player:update(dt)
 			end
 		end
 	else
-		local inputs = self.agent:getInputs()
+		local inputs = self.agent:getInputs(dt)
 		
 		local xx = 0
 		local yy = 0
@@ -247,6 +247,11 @@ function player:draw()
 	
 	-- Direction line
 	love.graphics.line(self.x, self.y, self.x + (self.radius * math.cos(self.dir)), self.y + (self.radius * math.sin(self.dir)))
+	
+	-- TESTING - show facing thing
+	if agentHelper.isFacingObject({player = self}, agentHelper.getClosestDistAmmoPack({player = self}), math.pi / 2) then
+		love.graphics.print("facing", self.x, self.y)
+	end
 end
 
 -- Draws on top of all other players

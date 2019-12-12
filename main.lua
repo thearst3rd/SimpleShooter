@@ -35,6 +35,7 @@ require "objects/ammoPack"
 
 agents = {}
 require "agents/doNothing"
+require "agents/spinInCircles"
 require "agents/human"
 
 

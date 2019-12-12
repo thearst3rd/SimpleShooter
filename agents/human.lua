@@ -19,7 +19,7 @@ function human.new(player)
 	return self
 end
 
-function human:getInputs()
+function human:getInputs(dt)
 	local inputs =
 	{
 		forward = false,

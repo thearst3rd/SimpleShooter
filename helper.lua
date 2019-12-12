@@ -27,3 +27,17 @@ function helper.circlesColliding(x1, y1, r1, x2, y2, r2)
 	local dist = helper.getMagnitude(x2 - x1, y2 - y1)
 	return (dist <= (r1 + r2))
 end
+
+-- Checks if something is facing something else, within a certain radius
+function helper.isFacing(x1, y1, dir, x2, y2, threshold)
+	threshold = threshold or (math.pi / 8)
+	
+	local realDir = math.atan2(y2 - y1, x2 - x1)
+	
+	local diff = dir - realDir
+	
+	if diff <= -math.pi then diff = diff + math.pi end
+	if diff > math.pi then diff = diff - math.pi end
+	
+	return (math.abs(diff) < (threshold / 2))
+end
