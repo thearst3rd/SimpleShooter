@@ -21,43 +21,7 @@ local player = objects.player
 player.__index = player
 
 
--- Controlling functions
-
-function player:getHumanInputs()
-	local inputs =
-	{
-		forward = love.keyboard.isDown("w"),
-		backward = love.keyboard.isDown("s"),
-		leftstrafe = love.keyboard.isDown("a"),
-		rightstrafe = love.keyboard.isDown("d"),
-		
-		leftturn = love.keyboard.isDown("left"),
-		rightturn = love.keyboard.isDown("right"),
-		
-		shoot = love.keyboard.isDown("space"),
-	}
-	
-	return inputs
-end
-
-function player:getAiInputs()
-	-- TODO implement ai lul
-	
-	local inputs =
-	{
-		forward = false,
-		backward = false,
-		leftstrafe = false,
-		rightstrafe = false,
-		
-		leftturn = false,
-		rightturn = false,
-		
-		shoot = false,
-	}
-	
-	return inputs
-end
+-- Player functions
 
 function player:shootBullet()
 	if self.bulletCooldown <= 0 and self.ammo > 0 then
@@ -74,7 +38,8 @@ function player.new(agent, x, y, dir)
 	local self = {}
 	setmetatable(self, player)
 	
-	self.agent = agent or agents.doNothing
+	agent = agent or agents.doNothing
+	self.agent = agent.new(self)
 	
 	self.x = x or 200
 	self.y = y or 200
@@ -138,7 +103,7 @@ function player:update(dt)
 				
 				self.ammo = MAX_AMMO
 			else
-				self.deleted = true
+				self.markedForDeletion = true
 			end
 		end
 	else
@@ -202,11 +167,31 @@ function player:update(dt)
 			end
 		end
 		
-		if inputs.shoot then
+		if inputs.shoot --[[and not self.prevInputs.shoot]] then
 			self:shootBullet()
 		end
 		
-		prevInputs = inputs
+		-- Collide with other objects
+		for _, v in pairs(state.objects) do
+			if helper.circlesColliding(self.x, self.y, self.radius, v.x, v.y, v.radius) then
+				if getmetatable(v) == objects.bullet then
+					if v.owner ~= self then
+						self.dead = true
+						self.deadCooldown = DEATH_COOLDOWN
+						self.lives = self.lives - 1
+						v.markedForDeletion = true
+					end
+				elseif getmetatable(v) == objects.ammoPack then
+					if v.active and (self.ammo < MAX_AMMO) then
+						v.active = false
+						v.activeCooldown = v.maxActiveCooldown
+						self.ammo = MAX_AMMO
+					end
+				end
+			end
+		end
+		
+		self.prevInputs = inputs
 	end
 end
 
@@ -244,9 +229,9 @@ end
 function player:draw()
 	-- Player body
 	local alpha = self.dead and 0.4 or (self.invin and ((self.invinCooldown % 0.2) < 0.1 and 1 or 0.1) or 1)
-	love.graphics.setColor((getmetatable(self.agent) == agents.human) and {0, 1, 0} or {1, 0, 0})
+	love.graphics.setColor((getmetatable(self.agent) == agents.human) and {0, 1, 0, alpha} or {1, 0, 0, alpha})
 	love.graphics.circle("fill", self.x, self.y, self.radius)
-	love.graphics.setColor(0, 0, 0)
+	love.graphics.setColor(0, 0, 0, alpha)
 	love.graphics.circle("line", self.x, self.y, self.radius)
 	
 	-- Direction line
