@@ -18,7 +18,9 @@ function game.load()
 	self.objects = {}
 	
 	-- Initial world state
-	table.insert(self.players, objects.player.new(true))
+	table.insert(self.players, objects.player.new(agents.human.new()))
+	
+	table.insert(self.objects, objects.ammoPack.new(640, 200))
 	
 	return self
 end

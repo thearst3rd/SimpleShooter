@@ -27,6 +27,14 @@ require "states/menu"
 objects = {}
 require "objects/player"
 require "objects/bullet"
+require "objects/ammoPack"
+
+
+-- Include all AI agents
+
+agents = {}
+require "agents/doNothing"
+require "agents/human"
 
 
 -- Main game callbacks
@@ -46,6 +54,7 @@ function love.draw()
 		state:draw()
 	end
 end
+
 
 -- Pass through other callbacks
 

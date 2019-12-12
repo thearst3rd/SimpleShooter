@@ -21,3 +21,9 @@ end
 function helper.scale(size, x, y)
 	return x * size, y * size
 end
+
+-- Checks if two circles are colliding
+function helper.circlesColliding(x1, y1, r1, x2, y2, r2)
+	local dist = helper.getMagnitude(x2 - x1, y2 - y1)
+	return (dist <= (r1 + r2))
+end
