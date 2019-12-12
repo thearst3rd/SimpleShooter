@@ -19,7 +19,7 @@ function behavior.new(player)
 	return self
 end
 
-function behavior:getInputs()
+function behavior:getInputs(dt)
 	local inputs =
 	{
 		forward = false,

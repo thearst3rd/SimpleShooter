@@ -37,7 +37,8 @@ agents = {}
 require "agents/doNothing"
 require "agents/spinInCircles"
 require "agents/human"
-require "agents/behavior"
+require "agents/dodgeOnly"
+require "agents/decision"
 
 
 -- Main game callbacks

@@ -43,5 +43,5 @@ end
 function agentHelper.isFacingObject(agent, obj, threshold)
 	local player = agent.player
 	
-	return helper.isFacing(player.x, player.y, player.dir, obj.x, obj.y, threshold)
+	return helper.isFacingObject(player, obj, threshold)
 end

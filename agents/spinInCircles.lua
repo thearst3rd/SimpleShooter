@@ -44,5 +44,7 @@ function spinInCircles:getInputs(dt)
 		inputs.leftturn = true
 	end
 	
+	inputs.shoot = true
+	
 	return inputs
 end

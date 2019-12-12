@@ -39,3 +39,35 @@ function helper.isFacing(x1, y1, dir, x2, y2, threshold)
 	
 	return (math.abs(diff) < (threshold / 2))
 end
+
+function helper.isFacingObject(obj1, obj2, threshold)
+	return helper.isFacing(obj1.x, obj1.y, obj1.dir, obj2.x, obj2.y, threshold)
+end
+
+function helper.getObjectDist(obj1, obj2)
+	return helper.getMagnitude(obj1.x - obj2.x, obj1.y - obj2.y)
+end
+
+function helper.getAllBullets()
+	local bullets = {}
+	
+	for _, obj in pairs(state.objects) do
+		if getmetatable(obj) == objects.bullet then
+			table.insert(bullets, obj)
+		end
+	end
+	
+	return bullets
+end
+
+function helper.getAllAmmoPacks()
+	local ammoPacks = {}
+	
+	for _, obj in pairs(state.objects) do
+		if getmetatable(obj) == objects.ammoPack then
+			table.insert(ammoPacks, obj)
+		end
+	end
+	
+	return ammoPacks
+end

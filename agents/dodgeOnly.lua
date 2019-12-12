@@ -3,23 +3,23 @@
 
 -- Setup
 
-agents.decision = {}
-local decision = agents.decision
-decision.__index = decision
+agents.dodgeOnly = {}
+local dodgeOnly = agents.dodgeOnly
+dodgeOnly.__index = dodgeOnly
 
 
 -- Main callbacks
 
-function decision.new(player)
+function dodgeOnly.new(player)
 	local self = {}
-	setmetatable(self, decision)
+	setmetatable(self, dodgeOnly)
 	
 	self.player = player
 	
 	return self
 end
 
-function decision:getInputs(dt)
+function dodgeOnly:getInputs(dt)
 	local inputs =
 	{
 		forward = false,
@@ -32,31 +32,17 @@ function decision:getInputs(dt)
 		
 		shoot = false,
 	}
-
+	
 	if self:isAboutToGetHit() then
 		self:dodge(inputs)
-	elseif self:isOutOfAmmo() then
-		-- Go to ammo pack
-		if self:notFacingAmmo() then
-			self:faceNearestAmmo(inputs)
-		else
-			-- move depending on how facing
-		end
-	else
-		-- Shoot at other players
-		if self:notFacingPlayer() then
-			self:faceNearestPlayer(inputs)
-		else
-			inputs.shoot = true
-		end
 	end
 	
 	return inputs
 end
 
-function decision:isAboutToGetHit()
+function dodgeOnly:isAboutToGetHit()
 	for _, bullet in pairs(helper.getAllBullets()) do
-		if helper.isFacingObject(bullet, self.player) and helper.getObjectDist(bullet, self.player) < 540 then
+		if helper.isFacingObject(bullet, self.player) --[[and helper.getObjectDist(bullet, self.player) < 540]] then
 			return true
 		end
 	end
@@ -64,11 +50,11 @@ function decision:isAboutToGetHit()
 	return false
 end
 
-function decision:dodge(inputs)
+function dodgeOnly:dodge(inputs)
 	local bulletsFacingMe = {}
 	
 	for _, bullet in ipairs(helper.getAllBullets()) do
-		if helper.isFacingObject(bullet, self.player) and helper.getObjectDist(bullet, self.player) < 540 then
+		if helper.isFacingObject(bullet, self.player) --[[and helper.getObjectDist(bullet, self.player) < 540]] then
 			table.insert(bulletsFacingMe, bullet)
 		end
 	end
@@ -85,7 +71,7 @@ function decision:dodge(inputs)
 	end
 	
 	-- Look at the angle of the bullet and move in a perpendicular direction to avoid it
-	local dirDiff = bullet.dir - self.player.dir
+	local dirDiff = closestBullet.dir - self.player.dir
 	if dirDiff < 0 then dirDiff = dirDiff + (2 * math.pi) end
 	
 	if (dirDiff < (math.pi / 8)) or (dirDiff >= (15 * math.pi / 8)) then
