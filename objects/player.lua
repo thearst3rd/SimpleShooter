@@ -102,6 +102,8 @@ function player:update(dt)
 				}
 				
 				self.ammo = MAX_AMMO
+				self.invin = true
+				self.invinCooldown = INVIN_COOLDOWN
 			else
 				self.markedForDeletion = true
 			end
@@ -188,6 +190,15 @@ function player:update(dt)
 						self.ammo = MAX_AMMO
 					end
 				end
+			end
+		end
+		
+		-- Let invinCooldown run out
+		if self.invin then
+			self.invinCooldown = self.invinCooldown - dt
+			if self.invinCooldown <= 0 then
+				self.invinCooldown = 0
+				self.invin = false
 			end
 		end
 		
