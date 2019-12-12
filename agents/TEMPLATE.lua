@@ -10,9 +10,11 @@ TEMPLATE.__index = TEMPLATE
 
 -- Main callbacks
 
-function TEMPLATE.new()
+function TEMPLATE.new(player)
 	local self = {}
 	setmetatable(self, TEMPLATE)
+	
+	self.player = player
 	
 	return self
 end

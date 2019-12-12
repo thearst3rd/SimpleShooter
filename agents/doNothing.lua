@@ -10,9 +10,11 @@ doNothing.__index = doNothing
 
 -- Main callbacks
 
-function doNothing.new()
+function doNothing.new(player)
 	local self = {}
 	setmetatable(self, doNothing)
+	
+	self.player = player
 	
 	return self
 end

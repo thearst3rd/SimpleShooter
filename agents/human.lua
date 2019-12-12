@@ -10,9 +10,11 @@ human.__index = human
 
 -- Main callbacks
 
-function human.new()
+function human.new(player)
 	local self = {}
 	setmetatable(self, human)
+	
+	self.player = player
 	
 	return self
 end

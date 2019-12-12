@@ -10,7 +10,7 @@ game.__index = game
 
 -- Main callbacks
 
-function game.load()
+function game.load(players)
 	local self = {}
 	setmetatable(self, game)
 	
@@ -18,9 +18,18 @@ function game.load()
 	self.objects = {}
 	
 	-- Initial world state
-	table.insert(self.players, objects.player.new(agents.human.new()))
+	for i, plr in ipairs(players) do
+		if plr then
+			table.insert(self.players, objects.player.new(agents[plr], 200 + (((i - 1) % 3 * 440)),
+				(i < 4) and 200 or 720 - 200,
+				0))
+		end
+	end
 	
-	table.insert(self.objects, objects.ammoPack.new(640, 200))
+	table.insert(self.objects, objects.ammoPack.new(640 - 300, 250))
+	table.insert(self.objects, objects.ammoPack.new(640 + 300, 250))
+	table.insert(self.objects, objects.ammoPack.new(640 - 300, 720 - 250))
+	table.insert(self.objects, objects.ammoPack.new(640 + 300, 720 - 250))
 	
 	return self
 end
