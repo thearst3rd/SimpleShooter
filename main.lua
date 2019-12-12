@@ -13,6 +13,7 @@ smallFont = love.graphics.newFont(16)
 -- Helper library
 
 require "helper"
+require "agentHelper"
 
 
 -- Include all the game states
