@@ -7,6 +7,8 @@ agents.TEMPLATE = {}
 local TEMPLATE = agents.TEMPLATE
 TEMPLATE.__index = TEMPLATE
 
+TEMPLATE.color = {0.6, 0.6, 0.6}
+
 
 -- Main callbacks
 

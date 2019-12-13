@@ -8,13 +8,11 @@ function agentHelper.getClosestDistAmmoPack(agent)
 	local minDist = 9999999999
 	local closestAmmo
 	
-	for i, obj in pairs(state.objects) do
-		if getmetatable(obj) == objects.ammoPack then
-			local dist = helper.getMagnitude(obj.x - player.x, obj.y - player.y)
-			if (dist < minDist) and obj.active then
-				minDist = dist
-				closestAmmo = obj
-			end
+	for i, obj in pairs(helper.getAllAmmoPacks()) do
+		local dist = helper.getMagnitude(obj.x - player.x, obj.y - player.y)
+		if (dist < minDist) and obj.active then
+			minDist = dist
+			closestAmmo = obj
 		end
 	end
 	
@@ -27,7 +25,7 @@ function agentHelper.getClosestDistPlayer(agent)
 	local minDist = 9999999999
 	local closestPlayer
 	
-	for i, obj in pairs(state.objects) do
+	for i, obj in pairs(helper.getAllAlivePlayers()) do
 		if obj ~= player then
 			local dist = helper.getMagnitude(obj.x - player.x, obj.y - player.y)
 			if dist < minDist then

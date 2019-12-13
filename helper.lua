@@ -7,6 +7,10 @@ function helper.getMagnitude(x, y)
 	return math.sqrt((x * x) + (y * y))
 end
 
+function helper.getObjectDist(obj1, obj2)
+	return helper.getMagnitude(obj1.x - obj2.x, obj1.y - obj2.y)
+end
+
 -- Returns the normalized coordinates of the 2D input vector
 function helper.normalize(x, y)
 	-- Check if zero
@@ -28,6 +32,10 @@ function helper.circlesColliding(x1, y1, r1, x2, y2, r2)
 	return (dist <= (r1 + r2))
 end
 
+function helper.objectsColliding(obj1, obj2)
+	return helper.circlesColliding(obj1.x, obj1.y, obj1.radius, obj2.x, obj2.y, obj2.radius)
+end
+
 -- Checks if something is facing something else, within a certain radius
 function helper.isFacing(x1, y1, dir, x2, y2, threshold)
 	threshold = threshold or (math.pi / 8)
@@ -35,17 +43,16 @@ function helper.isFacing(x1, y1, dir, x2, y2, threshold)
 	local realDir = math.atan2(y2 - y1, x2 - x1)
 	if realDir < 0 then realDir = realDir + (2 * math.pi) end
 	
-	local diff = dir - realDir
+	local diff = realDir - dir
 	
-	return (math.abs(diff) < (threshold / 2))
+	while diff < (-math.pi) do diff = diff + (2 * math.pi) end
+	while diff >= (math.pi) do diff = diff - (2 * math.pi) end
+	
+	return (math.abs(diff) < (threshold / 2)), diff
 end
 
 function helper.isFacingObject(obj1, obj2, threshold)
 	return helper.isFacing(obj1.x, obj1.y, obj1.dir, obj2.x, obj2.y, threshold)
-end
-
-function helper.getObjectDist(obj1, obj2)
-	return helper.getMagnitude(obj1.x - obj2.x, obj1.y - obj2.y)
 end
 
 function helper.getAllBullets()
@@ -70,4 +77,48 @@ function helper.getAllAmmoPacks()
 	end
 	
 	return ammoPacks
+end
+
+function helper.getAllAlivePlayers()
+	local alivePlayers = {}
+	
+	for _, obj in pairs(state.players) do
+		if not obj.dead then
+			table.insert(alivePlayers, obj)
+		end
+	end
+	
+	return alivePlayers
+end
+
+-- Returns a list of buttons that go in a direction relative to that angle
+-- i.e. if you pass in a dir of 0, it will press will_be_left. If you pass in pi, it will go will_be_rights. If you pass in
+-- 3 * pi / 4, it will go will_be_rights and right.
+function helper.dirButtons(dir)
+	while dir < 0 do dir = dir + (2 * math.pi) end
+	while dir >= (2 * math.pi) do dir = dir - (2 * math.pi) end
+	
+	local inputs = {}
+	if (dir < (math.pi / 8)) or (dir >= (15 * math.pi / 8)) then
+		inputs.forward = true
+	elseif dir < (3 * math.pi / 8) then
+		inputs.forward = true
+		inputs.rightstrafe = true
+	elseif dir < (5 * math.pi / 8) then
+		inputs.rightstrafe = true
+	elseif dir < (7 * math.pi / 8) then
+		inputs.rightstrafe = true
+		inputs.backward = true
+	elseif dir < (9 * math.pi / 8) then
+		inputs.backward = true
+	elseif dir < (11 * math.pi / 8) then
+		inputs.backward = true
+		inputs.leftstrafe = true
+	elseif dir < (13 * math.pi / 8) then
+		inputs.leftstrafe = true
+	elseif dir < (15 * math.pi / 8) then
+		inputs.leftstrafe = true
+		inputs.forward = true
+	end
+	return inputs
 end

@@ -7,6 +7,8 @@ agents.spinInCircles = {}
 local spinInCircles = agents.spinInCircles
 spinInCircles.__index = spinInCircles
 
+spinInCircles.color = {0.4, 0.4, 1}
+
 
 -- Main callbacks
 
@@ -43,8 +45,6 @@ function spinInCircles:getInputs(dt)
 	else
 		inputs.leftturn = true
 	end
-	
-	inputs.shoot = true
 	
 	return inputs
 end

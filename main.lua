@@ -14,6 +14,7 @@ smallFont = love.graphics.newFont(16)
 
 require "helper"
 require "agentHelper"
+require "commonActions"
 
 
 -- Include all the game states
@@ -36,9 +37,11 @@ require "objects/ammoPack"
 agents = {}
 require "agents/doNothing"
 require "agents/spinInCircles"
+require "agents/spinAndShoot"
 require "agents/human"
 require "agents/dodgeOnly"
 require "agents/decision"
+require "agents/decisionSmart"
 
 
 -- Main game callbacks

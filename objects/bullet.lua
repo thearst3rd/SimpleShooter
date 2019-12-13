@@ -6,7 +6,7 @@ local MOVE_SPEED = 1000
 
 -- Setup
 
-objects.bullet = {}
+objects.bullet = {MOVE_SPEED = MOVE_SPEED}
 local bullet = objects.bullet
 bullet.__index = bullet
 

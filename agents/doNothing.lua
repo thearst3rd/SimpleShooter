@@ -7,6 +7,8 @@ agents.doNothing = {}
 local doNothing = agents.doNothing
 doNothing.__index = doNothing
 
+doNothing.color = {0.6, 0.6, 0.6}
+
 
 -- Main callbacks
 

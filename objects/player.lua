@@ -173,25 +173,33 @@ function player:update(dt)
 			self:shootBullet()
 		end
 		
-		-- Collide with other objects
-		for _, v in pairs(state.objects) do
-			if helper.circlesColliding(self.x, self.y, self.radius, v.x, v.y, v.radius) then
-				if getmetatable(v) == objects.bullet then
-					if v.owner ~= self then
+		-- Collide with bullets
+		if not self.invin then
+			for _, bullet in ipairs(helper.getAllBullets()) do
+				if bullet.owner ~= self then
+					if helper.objectsColliding(self, bullet) then
 						self.dead = true
 						self.deadCooldown = DEATH_COOLDOWN
 						self.lives = self.lives - 1
-						v.markedForDeletion = true
+						bullet.markedForDeletion = true
 					end
-				elseif getmetatable(v) == objects.ammoPack then
-					if v.active and (self.ammo < MAX_AMMO) then
-						v.active = false
-						v.activeCooldown = v.maxActiveCooldown
+				end
+			end
+		end
+		
+		-- Collide with ammoPacks
+		if self.ammo < MAX_AMMO then
+			for _, ammoPack in ipairs(helper.getAllAmmoPacks()) do
+				if ammoPack.active then
+					if helper.objectsColliding(self, ammoPack) then
+						ammoPack.active = false
+						ammoPack.activeCooldown = ammoPack.maxActiveCooldown
 						self.ammo = MAX_AMMO
 					end
 				end
 			end
 		end
+		
 		
 		-- Let invinCooldown run out
 		if self.invin then
@@ -240,7 +248,9 @@ end
 function player:draw()
 	-- Player body
 	local alpha = self.dead and 0.4 or (self.invin and ((self.invinCooldown % 0.2) < 0.1 and 1 or 0.1) or 1)
-	love.graphics.setColor((getmetatable(self.agent) == agents.human) and {0, 1, 0, alpha} or {1, 0, 0, alpha})
+	local color = getmetatable(self.agent).color
+	color[4] = alpha
+	love.graphics.setColor(color)
 	love.graphics.circle("fill", self.x, self.y, self.radius)
 	love.graphics.setColor(0, 0, 0, alpha)
 	love.graphics.circle("line", self.x, self.y, self.radius)

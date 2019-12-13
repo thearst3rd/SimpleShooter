@@ -1,27 +1,27 @@
--- Agent
+-- "Smart" decision tree
 
 
 -- Setup
 
-agents.decision = {}
-local decision = agents.decision
-decision.__index = decision
+agents.decisionSmart = {}
+local decisionSmart = agents.decisionSmart
+decisionSmart.__index = decisionSmart
 
-decision.color = {1, 1, 0.35}
+decisionSmart.color = {1, 0.35, 0.35}
 
 
 -- Main callbacks
 
-function decision.new(player)
+function decisionSmart.new(player)
 	local self = {}
-	setmetatable(self, decision)
+	setmetatable(self, decisionSmart)
 	
 	self.player = player
 	
 	return self
 end
 
-function decision:getInputs(dt)
+function decisionSmart:getInputs(dt)
 	local inputs =
 	{
 		forward = false,
@@ -34,15 +34,15 @@ function decision:getInputs(dt)
 		
 		shoot = false,
 	}
-
-	if commonActions.isAboutToGetHit(self) then
-		commonActions.dodge(self, inputs)
+	
+	if commonActions.shouldDodgeSmart(self) then
+		commonActions.dodgeSmart(self, inputs)
 	else
 		if self.player.ammo <= 0 then
 			commonActions.goTowardsAmmo(self, inputs)
 		else
 			if #(helper.getAllAlivePlayers()) > 1 then
-				commonActions.shootAtPlayer(self, inputs)
+				commonActions.shootAtPlayerLeading(self, inputs)
 			else
 				if self.player.ammo < 10 then
 					commonActions.goTowardsAmmo(self, inputs)

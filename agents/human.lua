@@ -7,6 +7,8 @@ agents.human = {}
 local human = agents.human
 human.__index = human
 
+human.color = {0.35, 1, 0.35}
+
 
 -- Main callbacks
 

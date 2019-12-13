@@ -43,7 +43,7 @@ function menu.load()
 	return self
 end
 
-local playButtonYOff = 570
+local playButtonYOff = 540
 local playButtonW = 200
 local playButtonH = 100
 
@@ -94,8 +94,6 @@ end
 function menu:keypressed(key, scancode, isrepeat)
 	if key == "escape" then
 		love.event.quit()
-	--elseif key == "return" then
-		--state = states.game.load()
 	end
 end
 
@@ -137,11 +135,11 @@ end
 -- Handling the player selection dialogs
 
 local padding = 100 	-- on EACH side
-local yOff = 400
-local onButtonYOff = 40
+local yOff = 360
+local textYOff = 40
 local buttonsYOff = 80
 local buttonBoxSize = 26
-local buttonOffset = 10
+local buttonOffset = 20
 local humanYOff = 130
 local humanRad = 13
 
@@ -170,7 +168,7 @@ function menu:handlePlayer(n)
 	-- Toggle button
 	
 	local mxx = mx - px + 25
-	local myy = my - py - onButtonYOff
+	local myy = my - py
 	
 	if (mxx > -buttonBoxSize / 2) and (mxx < buttonBoxSize / 2) and (myy > 0) and (myy < buttonBoxSize) then
 		plr[7] = true
@@ -207,16 +205,14 @@ function menu:drawPlayer(n)
 	
 	local plr = self.players[n]
 	
-	-- Text
-	
-	love.graphics.setColor(0, 0, 0)
-	love.graphics.setFont(mediumFont)
-	love.graphics.printf(plr[2] and "human" or self.agentKeys[plr[1]], px - 200, py, 400, "center")
+	local agentName = plr[2] and "human" or self.agentKeys[plr[1]]
 	
 	-- On button
 	
+	love.graphics.setColor(0, 0, 0)
+	love.graphics.setFont(mediumFont)
+	
 	px = px - 25
-	py = yOff + onButtonYOff
 	
 	love.graphics.print("On?", px + 30, py)
 	
@@ -229,9 +225,35 @@ function menu:drawPlayer(n)
 	love.graphics.rectangle("line", px - buttonBoxSize / 2, py,
 		buttonBoxSize, buttonBoxSize)
 	
-	-- Left right buttons
+	if plr[6] then
+		love.graphics.polygon("fill",
+			px - 1, py + 11,
+			px - 7, py + 5,
+			px - 12, py + 10,
+			px + 0, py + 20)
+		love.graphics.polygon("fill",
+			px + 0, py + 20,
+			px + 18, py - 5,
+			px + 15, py - 10,
+			px - 1, py + 11)
+		love.graphics.polygon("line",
+			px - 1, py + 11,
+			px - 7, py + 5,
+			px - 12, py + 10,
+			px + 0, py + 20,
+			px + 18, py - 5,
+			px + 15, py - 10)
+	end
+	
+	-- Text
 	
 	px = px + 25
+	py = yOff + textYOff
+	
+	love.graphics.printf(agentName, px - 200, py, 400, "center")
+	
+	-- Left right buttons
+	
 	py = yOff + buttonsYOff
 	
 	love.graphics.setColor(plr[3] and {1, 1, 1} or {1, 1, 0})
@@ -250,6 +272,12 @@ function menu:drawPlayer(n)
 	love.graphics.polygon("line", px + buttonOffset, py,
 		px + buttonOffset + buttonBoxSize, py + (buttonBoxSize / 2),
 		px + buttonOffset, py + buttonBoxSize)
+	
+	-- Color
+	love.graphics.setColor(agents[agentName].color)
+	love.graphics.rectangle("fill", px - (buttonBoxSize / 2), py, buttonBoxSize, buttonBoxSize)
+	love.graphics.setColor(0, 0, 0)
+	love.graphics.rectangle("line", px - (buttonBoxSize / 2), py, buttonBoxSize, buttonBoxSize)
 	
 	-- Human radio
 	
