@@ -6,6 +6,7 @@ commonActions = {}
 -- DODGING
 
 function commonActions.isAboutToGetHit(self)
+	if self.player.invin then return false end
 	for _, bullet in pairs(helper.getAllBullets()) do
 		if helper.isFacingObject(bullet, self.player) then
 			return true
@@ -61,6 +62,7 @@ function commonActions.closeToWall(self)
 end
 
 function commonActions.closeToInactiveEnemy(self)
+	if self.player.invin then return false end
 	local inactivePlayers = {}
 	for _, plr in ipairs(state.players) do
 		if ((plr.dead and plr.lives > 0) or plr.invin) and plr ~= self.player then

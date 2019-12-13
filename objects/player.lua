@@ -248,7 +248,13 @@ end
 function player:draw()
 	-- Player body
 	local alpha = self.dead and 0.4 or (self.invin and ((self.invinCooldown % 0.2) < 0.1 and 1 or 0.1) or 1)
-	local color = getmetatable(self.agent).color
+	local color = {}
+	do
+		local origColor = getmetatable(self.agent).color
+		color[1] = origColor[1]
+		color[2] = origColor[2]
+		color[3] = origColor[3]
+	end
 	color[4] = alpha
 	love.graphics.setColor(color)
 	love.graphics.circle("fill", self.x, self.y, self.radius)
@@ -277,6 +283,6 @@ function player:drawHud()
 	
 	yy = math.floor(self.y + self.radius + 4)
 	
-	love.graphics.setColor(0, 0.6, 0)
+	--love.graphics.setColor(0, 0.6, 0)
 	love.graphics.printf(tostring(livesStr), xx, yy, 200, "center")
 end

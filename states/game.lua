@@ -121,7 +121,7 @@ function game:draw()
 	if self.won ~= false then
 		love.graphics.setFont(titleFont)
 		if self.won == "won" then
-			love.graphics.setColor(0, 0.5, 0)
+			love.graphics.setColor(0, 0.7, 0)
 			love.graphics.printf("WINNER!", 0, 150, 1280, "center")
 		else
 			love.graphics.setColor(1, 1, 0)
