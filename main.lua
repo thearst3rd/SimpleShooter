@@ -51,6 +51,9 @@ function love.load()
 end
 
 function love.update(dt)
+	-- If the game lags or is getting less than 20 fps, make the game ticks lag behind
+	if dt > 1/20 then dt = 1/20 end
+	
 	if state and state.update then
 		state:update(dt)
 	end

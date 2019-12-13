@@ -216,7 +216,6 @@ function commonActions.shootAtPlayerLeading(self, inputs, iterations)
 	iterations = iterations or 2
 	
 	local dist
-	local angle
 	
 	local px, py = player.x, player.y
 	local dist = helper.getMagnitude(self.player.x, self.player.y, px, py)
@@ -231,7 +230,7 @@ function commonActions.shootAtPlayerLeading(self, inputs, iterations)
 		dist = helper.getMagnitude(self.player.x, self.player.y, px, py)
 	end
 	
-	angle = math.atan2(py - self.player.y, px - self.player.x)
+	local angle = math.atan2(py - self.player.y, px - self.player.x)
 	if angle < 0 then angle = angle + (2 * math.pi) end
 	
 	local diff = angle - self.player.dir
